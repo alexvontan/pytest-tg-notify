@@ -49,10 +49,10 @@ def session_data(tmp_path_factory, worker_id, request):
         # check amount of calculated threads is equal to amount of running threads
         if data['worker_count'] == request.config.workerinput["workercount"]:
             percent = round((data['passed'] * 100) / data['amount'], 2)
-            Bot().send_message(f"Всего тестов: {data['amount']}\n"
-                               f"Успешных: {data['passed']}\n"
-                               f"Проваленных: {data['failed']}\n"
-                               f"Результат: {percent}%\n")
+            Bot().send_message(f"Tests amount: {data['amount']}\n"
+                               f"Passed: {data['passed']}\n"
+                               f"Failed: {data['failed']}\n"
+                               f"Result: {percent}%\n")
 
 
 def pytest_sessionstart(session):
