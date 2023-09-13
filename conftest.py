@@ -27,6 +27,7 @@ def session_data(tmp_path_factory, worker_id, request):
         "amount": 0,
         "passed": 0,
         "failed": 0,
+        "blocked": 0,
         "worker_count": 0
     }
     # waiting for session ending
@@ -41,17 +42,20 @@ def session_data(tmp_path_factory, worker_id, request):
                 with open(fn) as json_file:
                     data = json.load(json_file)
             # updating amount of tests
-            data['amount'] += sum(1 for result in request.session.results.values() if result)
             data['failed'] += sum(1 for result in request.session.results.values() if result.failed)
             data['passed'] += sum(1 for result in request.session.results.values() if result.passed)
             data['worker_count'] += 1
             fn.write_text(json.dumps(data))
         # check amount of calculated threads is equal to amount of running threads
         if data['worker_count'] == request.config.workerinput["workercount"]:
+            # set tests amount and calculate broken tests
+            data['amount'] = request.session.testscollected
+            data['blocked'] = data['amount'] - data['failed'] - data['passed']
             percent = round((data['passed'] * 100) / data['amount'], 2)
             Bot().send_message(f"Tests amount: {data['amount']}\n"
                                f"Passed: {data['passed']}\n"
                                f"Failed: {data['failed']}\n"
+                               f"Blocked: {data['blocked']}\n"
                                f"Result: {percent}%\n")
 
 
